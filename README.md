@@ -51,3 +51,29 @@ pipeline {
         }
     }
 }
+
+
+pipeline {
+    agent any
+    stages {
+        stage('List Credentials') {
+            steps {
+                script {
+                    def allCredentials = com.cloudbees.plugins.credentials.CredentialsProvider
+                        .lookupCredentials(
+                            com.cloudbees.plugins.credentials.Credentials.class,
+                            Jenkins.instance,
+                            null,
+                            com.cloudbees.plugins.credentials.domains.Domain.global()
+                        )
+                    
+                    echo "=== Global Credentials ==="
+                    allCredentials.each { cred ->
+                        echo "ID: ${cred.id} | Type: ${cred.getClass().simpleName} | Description: ${cred.description ?: 'None'}"
+                    }
+                    echo "Total: ${allCredentials.size()}"
+                }
+            }
+        }
+    }
+}
