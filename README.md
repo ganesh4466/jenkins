@@ -77,3 +77,9 @@ pipeline {
         }
     }
 }
+
+As per the simplification utility method, while executing a command, we are using the script:
+cmd > commandOutput.txt 2> errorOutput.txt
+This saves standard output (such as 'info' or 'success' logs) to commandOutput.txt, and saves errors, warnings, and anonymous logs to errorOutput.txt.
+Because of this, npm feeds (which are categorized as anonymous) were missing from commandOutput.txt.
+I made changes to display the npm logs directly in the console.
