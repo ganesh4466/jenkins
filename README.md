@@ -140,3 +140,17 @@ MSBuild completes all its stages, including deployment, before Node stages begin
 This breaks the expected build flow, as Node outputs are not available when MSBuild needs them.
 
 Adopting the first approach ensures a logical and reliable build process aligned with both dependency order and deployment requirements.
+
+
+
+Subject: Request for PR Approval – Standalone Pipeline Changes
+
+Hi [Leads' Names or Team],
+
+I’ve raised a PR that includes standalone pipeline changes. As part of this update, the combination changes (related to MSBuild and Node integration) have been removed for now. These will be addressed in the next release as part of the pipeline chaining implementation.
+
+Kindly review and approve the PR at your earliest convenience.
+
+Please let me know if any further clarification is needed.
+
+Best regards,
