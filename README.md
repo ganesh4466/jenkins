@@ -1,3 +1,110 @@
+package com.gseven
+
+import net.sf.json.groovy.JsonSlurper
+
+public class SamOne {
+    static void main(String[] args) {
+        def configText= "pipelineOne{\n" +
+                "   app = \"name\"\n" +
+                "   dev = true\n" +
+                "   lst = [\"gty\"]\n" +
+                "   map = [sd:\"sdf\"]\n" +
+                "   //apa = \"qa\"\n" +
+                "   \n" +
+                "   /* \n" +
+                "    app = \"test\"\n" +
+                "*/\n" +
+                "}\n" +
+                "\n" +
+                "pipelineTwo{\n" +
+                "   app = \"name\"\n" +
+                "   dev = true\n" +
+                "   lst = [\"gty\"]\n" +
+                "   map = [sd:\"sdf\"]\n" +
+                "   //apa = \"qa\"\n" +
+                "   \n" +
+                "   /* \n" +
+                "    app = \"test\"\n" +
+                "*/\n" +
+                "}\n" +
+                "\n"
+        // Remove all comments (single-line and multi-line)
+        def cleaned = configText.replaceAll(/\/\/.*?(\n|$)/, '\n')  // Single-line
+                .replaceAll(/\/\*.*?\*\//, '')       // Multi-line
+                .trim()
+
+        // Parse into map of pipeline configurations
+        def result = [:]
+        def currentPipeline = null
+        def pipelineContent = [:]
+
+        cleaned.eachLine { line ->
+            line = line.trim()
+            if (line.isEmpty()) return
+
+            // Check for pipeline declaration (e.g., "pipelineOne{")
+            def pipelineMatch = line =~ /^(\w+)\s*\{$/
+            if (pipelineMatch) {
+                currentPipeline = pipelineMatch[0][1]
+                pipelineContent = [:]
+                return
+            }
+
+            // Check for closing brace
+            if (line == '}' && currentPipeline) {
+                result[currentPipeline] = pipelineContent
+                currentPipeline = null
+                return
+            }
+
+            // Parse key-value pairs if inside a pipeline block
+            if (currentPipeline) {
+                // Handle different value types
+                def valueMatch = line =~ /^(\w+)\s*=\s*(.+)$/
+                if (valueMatch) {
+                    def key = valueMatch[0][1]
+                    def valueStr = valueMatch[0][2].trim()
+
+                    // Evaluate the value string safely
+                    pipelineContent[key] = evaluateValue(valueStr)
+
+                }
+            }
+
+            System.out.println(pipelineContent)
+        }
+    }
+
+    // Helper method to safely evaluate different value types
+    def evaluateValue(String valueStr) {
+        try {
+            // Handle lists
+            if (valueStr.startsWith('[') && valueStr.endsWith(']')) {
+                return new JsonSlurper().parseText(valueStr)
+            }
+            // Handle maps
+            else if (valueStr.startsWith('[') && valueStr.contains(':') && valueStr.endsWith(']')) {
+                return new JsonSlurper().parseText(valueStr)
+            }
+            // Handle booleans
+            else if (valueStr == 'true') return true
+            else if (valueStr == 'false') return false
+            // Handle numbers
+            else if (valueStr.isNumber()) return valueStr.toInteger()
+            // Default to string (remove quotes if present)
+            else return valueStr.replaceAll(/^"(.*)"$/, '$1')
+        } catch (Exception e) {
+            return valueStr // Return as string if parsing fails
+        }
+    }
+
+
+}
+
+
+
+
+=========================================================================================================================================================
 pipeline {
     agent any
     stages {
