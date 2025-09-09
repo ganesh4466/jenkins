@@ -261,3 +261,22 @@ Kindly review and approve the PR at your earliest convenience.
 Please let me know if any further clarification is needed.
 
 Best regards,
+
+
+Subject: Request to Add Valid Standalone Binary Files (ZIP) with Versions
+
+Hi [Recipient’s Name],
+
+I noticed that the JSON from the DML URL you shared previously does not contain validated standalone binaries. To support our setup and enable unit testing, I request you to add standalone ZIP binary files for the following tools, with proper versions included, for both Windows and Linux:
+
+Maven
+
+Python
+
+Gradle
+
+Node.js
+
+Having validated and versioned standalone ZIP binaries in the DML URL will help ensure consistency across environments and make our unit testing process more reliable.
+
+Kindly update the JSON with the correct ZIP binary versions in the DML URL, and please let me know once this is available.
