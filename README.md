@@ -280,3 +280,6 @@ Node.js
 Having validated and versioned standalone ZIP binaries in the DML URL will help ensure consistency across environments and make our unit testing process more reliable.
 
 Kindly update the JSON with the correct ZIP binary versions in the DML URL, and please let me know once this is available.
+
+
+Please add stable Gradle versions from the EARC portal for our testing. As per our design, support for both Windows and Linux is required, but for now, adding ZIP binaries for any one environment will help us proceed with the work.
