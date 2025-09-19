@@ -283,3 +283,20 @@ Kindly update the JSON with the correct ZIP binary versions in the DML URL, and 
 
 
 Please add stable Gradle versions from the EARC portal for our testing. As per our design, support for both Windows and Linux is required, but for now, adding ZIP binaries for any one environment will help us proceed with the work.
+Please find below the Minutes of Meeting (MoM) regarding the discussion on handling .exe type binaries and associated installation scripts.
+
+MoM – Q&A Format
+
+Q1. Do we get the installation scripts along with the binaries in Artifactory?
+A: No, the installation scripts are not bundled with binaries in Artifactory. They are maintained only in GitHub.
+
+Q2. Are the scripts available for all four pipelines (Maven, Python, Node, and Gradle) on both Linux and Windows?
+A: No, the scripts are not available for all four pipelines. They are currently available only for Python and Node on Windows.
+
+Q3. Are the scripts available in Artifactory?
+A: No, the scripts are not stored in Artifactory. They are available only in GitHub and require guest access to use.
+
+Q4. How do the installation scripts work?
+A: The scripts are written in PowerShell (.ps1) for each tool. They are designed to handle .exe type binaries, take the version and Artifactory API key as inputs, and allow installation of all supported versions.
+
+Please find below the Minutes of Meeting (MoM) in Q&A format for our discussion on handling .exe type binaries and installation scripts.
