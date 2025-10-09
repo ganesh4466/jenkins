@@ -1,0 +1,167 @@
+# Basic installation
+#.\scriptname.ps1 -install -version "3.11.5" -fileSourcePath "C:\installers\python-3.11.5.exe"
+
+# Installation with custom directory
+#.\scriptname.ps1 -install -version "3.11.5" -fileSourcePath "C:\installers\python-3.11.5.exe" -rootInstallDirectory "D:\Python"
+
+# With verbose logging
+#.\scriptname.ps1 -install -version "3.11.5" -fileSourcePath "C:\installers\python-3.11.5.exe" -Verbose
+
+# Test run with WhatIf
+#.\scriptname.ps1 -install -version "3.11.5" -fileSourcePath "C:\installers\python-3.11.5.exe" -WhatIf
+
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification = 'Suppressing PSUseDeclaredVarsMoreThanAssignments warnings as these variables are used later and PSScriptAnalyzer is not correctly detecting them')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Suppressing PSUseShouldProcessForStateChangingFunctions warnings as these variables are used later and PSScriptAnalyzer is not correctly detecting them')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '', Justification = 'Suppressing PSReviewUnusedParameter warnings as these variables are used later and PSScriptAnalyzer is not correctly detecting them')]
+
+[CmdletBinding(SupportsShouldProcess)]
+Param(
+    [Parameter(Mandatory = $true, HelpMessage = "Install a new package", Position = 0, ParameterSetName = "Installation")]
+    [switch]$install,
+    
+    [Parameter(Mandatory = $true, HelpMessage = "Version to install", Position = 1, ParameterSetName = "Installation")]
+    [string]$version,
+    
+    [Parameter(Mandatory = $true, HelpMessage = "Specify the source path for configuration files", Position = 2, ParameterSetName = "Installation")]
+    [string]$fileSourcePath,
+    
+    [Parameter(Mandatory = $false, HelpMessage = "Specify Installation Folder", Position = 3, ParameterSetName = "Installation")]
+    [string]$rootInstallDirectory
+)
+
+function Invoke-ShouldProcess {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSShouldProcess', '', Justification = 'Suppress the PSShouldProcess warning since we''re wrapping ShouldProcess to be able to mock it from a Pester test')]
+    [CmdletBinding()]
+    param (
+        [System.Management.Automation.PSCmdlet]
+        $Context,
+        [string]
+        $Target,
+        [string]
+        $Operation,
+        [string]
+        $Message
+    )
+    
+    if ($Message) {
+        $Context.ShouldProcess($Message, $Target, $Operation)
+    }
+    else {
+        $Context.ShouldProcess($Target, $Operation)
+    }
+}
+
+function Get-Timestamp {
+    return $(Get-Date).ToUniversalTime().ToString("MM-dd-yyyy HH:mm:ss,fff")
+}
+
+function Write-LogFile {
+    param(
+        [string]$message
+    )
+    
+    Write-Verbose "[$(Get-Timestamp)] - $message"
+    if ($logFile) {
+        Write-Output "[$(Get-Timestamp)] - $message" | Out-File $logFile -Append -Encoding ASCII
+    }
+}
+
+function Write-LogErrorFile {
+    param(
+        [string]$message
+    )
+    
+    Write-Error "[$(Get-Timestamp)] - (ERROR) - $message"
+    if ($logFile) {
+        Write-Output "[$(Get-Timestamp)] (ERROR) $message" | Out-File $logFile -Append -Encoding ASCII
+    }
+}
+
+function Install-Python {
+    param(
+        [psobject]$python
+    )
+    
+    Write-LogFile "Installing [$($python.version)]..."
+    $command = $python.fileSourcePath
+    $installDirectory = $python.installRootPath
+
+    Write-Verbose "installDirectory: [$installDirectory]"
+
+    if (!(Test-Path -Path $installDirectory)) {
+        New-Item -Path $installDirectory -ItemType Directory -Force
+        Write-LogFile "Created [$installDirectory]..."
+    } 
+
+    $versionPattern = $python.version
+    # Inno gets its own log file
+    $innoLogFile = "$tempDirectory\Python-$versionPattern-install.inno.log"
+    Write-LogFile "innoLogFile location: $innoLogFile"
+
+    $arguments = "/DIR=$installDirectory /verysilent /suppressmsgboxes /norestart /log=$innoLogFile"
+    Write-LogFile "Installing $($python.version) with $arguments..."
+
+    $process = Start-Process -FilePath $command -ArgumentList $arguments -Wait -PassThru -NoNewWindow
+
+    if ($process.ExitCode -eq 0) {
+        Write-LogFile "Successfully installed python package [$($python.fileSourcePath)]!"
+    }
+    elseif ($process.ExitCode -eq 3010) {
+        Write-LogFile "Successfully installed python package [$($python.fileSourcePath)], but the system needs a restart!"
+    }
+    else {
+        throw "Unable to install! Returned Exit Code [$($process.ExitCode)]!"
+    }
+}
+
+# Main script execution
+$scriptVersion = "0.0.15"
+$tempDirectory = $env:TEMP
+
+if ($install) {
+    $logFile = "$tempDirectory\python-server-$version-install.log"
+}
+
+if (Invoke-ShouldProcess -Context $PSCmdlet -Target "python-server-manager" -Operation "Main Execution") {
+    # First, get the latest configuration
+    try {
+        Write-LogFile "-START Script Version [$scriptVersion]....."
+        Write-LogFile "Temp folder is set to [$tempDirectory]..."
+
+        if ($fileSourcePath) {
+            Write-LogFile "File source path is set to [$fileSourcePath]..."
+            if (!(Test-Path -Path $fileSourcePath)) {
+                Write-LogErrorFile "File source path [$fileSourcePath] does not exist. Please provide the correct path."
+                Exit 1
+            }
+        }
+
+        Write-LogFile "Installation directory path as given by User [$rootInstallDirectory]...."
+        $installRootPath = $rootInstallDirectory
+        Write-LogFile "Using installation root path: [$installRootPath]"
+
+        if ($null -eq $installRootPath) {
+            $installRootPath = "$env:SYSTEMDRIVE\Apps\Python"
+            Write-LogFile "Default install root path is set to [$installRootPath]"
+        }
+
+        if ($install) {
+            $package = [psobject]@{
+                version = $version
+                fileSourcePath = $fileSourcePath
+                installRootPath = $installRootPath
+                classification = "install"
+            }
+            # Install the existing version
+            Install-Python $package
+        }
+    }
+    catch {
+        Write-LogErrorFile "An error occurred during execution: $_"
+        Write-LogErrorFile "Please check the log file ($logFile) for more details."
+        Exit 1
+    }
+    finally {
+        Write-LogFile "---END---"
+    }
+}
