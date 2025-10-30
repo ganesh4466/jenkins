@@ -300,3 +300,16 @@ Q4. How do the installation scripts work?
 A: The scripts are written in PowerShell (.ps1) for each tool. They are designed to handle .exe type binaries, take the version and Artifactory API key as inputs, and allow installation of all supported versions.
 
 Please find below the Minutes of Meeting (MoM) in Q&A format for our discussion on handling .exe type binaries and installation scripts.
+
+
+Subject: Missing Binaries in Artifactory – Request to Update Source Links in tools.json
+
+Hi [Team/Name],
+
+We have identified that certain binaries are missing in Artifactory, which appears to be caused by outdated source links defined in the tools.json file.
+
+Kindly review and update the source links in tools.json with the latest available sources. This issue is currently blocking our ongoing release, so your prompt action will be highly appreciated.
+
+Please confirm once the update has been completed or let us know if any further information is required from our side.
+
+Thank you for your support.
