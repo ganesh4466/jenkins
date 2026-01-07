@@ -313,3 +313,151 @@ Kindly review and update the source links in tools.json with the latest availabl
 Please confirm once the update has been completed or let us know if any further information is required from our side.
 
 Thank you for your support.
+
+==============================
+
+Slide 1: Faster Runtime - What & Why
+(Presenter: Start with confidence and eye contact)
+
+"Good morning everyone. Today I'm going to show you a game-changer for our pipeline execution - Faster Runtime Tool Management.
+
+Let me paint a picture we've all experienced: You trigger a pipeline, and it fails because the specific Maven or Python version you need isn't installed on the Jenkins agent. You then spend hours coordinating with DevOps teams to get tools installed.
+
+This feature solves exactly that problem. It automatically downloads and installs tools during pipeline execution - but here's the crucial part: only tools that are EARC-approved. This means we get both speed and compliance in one solution.
+
+In just a moment, I'll show you a live demo of how this works. But first, let me explain the three scenarios you'll encounter."
+
+Slide 2: Usage Scenarios
+(Presenter: Use hand gestures to indicate the three scenarios)
+
+"Now, when you use this feature, you'll typically encounter three scenarios:
+
+First - when you're using a tool for the very first time. The pipeline checks, doesn't find it, verifies it's EARC-approved, and installs it automatically.
+
+Second - the happy path. The tool is already there from a previous run, so we skip the download and use it immediately. This is where we see the real speed benefit.
+
+Third - what happens if someone requests a tool that's not approved or doesn't exist. The system checks, finds it's not in our EARC approval list, and fails the pipeline with a clear error message.
+
+This ensures we never compromise on security while gaining flexibility."
+
+Slide 3: Live Demo
+(Presenter: Switch to demo screen)
+
+"Now let me show you this in action. I have a Jenkins pipeline configured to use WINDOWS_PYTHON_3.11.1.
+
+(Start demo/video)
+
+Watch the console output here... The system first checks if this version exists on the agent... It doesn't.
+
+Now it's verifying with EARC's approval system... You can see the green check mark - it's approved.
+
+It's now downloading from our SDI Artifactory... And here - installation completes in about 45 seconds.
+
+Notice the format here - WINDOWS_PYTHON_3.11.1 - this strict format is critical. It must be OS, then tool name, then exact version in X.X.X format.
+
+(Show successful build completion)
+
+And there we have it - the pipeline completes successfully without any pre-installation."
+
+Slide 4: Key Advantages
+(Presenter: Move away from screen, engage audience)
+
+"So what does this mean for us? Let me highlight three key advantages:
+
+First - Efficiency. We eliminate days of waiting for tool installations. Teams can specify exactly what they need, when they need it.
+
+Second - Compliance. This isn't a wild-west tool download system. Every single tool must be EARC-approved. Our security standards are baked right into the process.
+
+Third - Flexibility. Different projects can use different Python or Node versions on the same Jenkins agent. No more 'one-size-fits-all' tool installations that satisfy nobody.
+
+The result? Developers spend more time coding, less time waiting for environments."
+
+Slide 5: Summary & Resources
+(Presenter: Summarize clearly, slower pace)
+
+"To wrap up, here's what you need to know:
+
+First - always use the correct format: OS, underscore, tool name, underscore, and the exact version.
+
+Second - before you use any tool, check our EARC approval portal at the URL shown here. This will save you from pipeline failures.
+
+Third - we have dedicated teams to support you. For technical issues, contact the SDI Artifactory team. For new tool approvals, reach out to the EARC team.
+
+Finally - start small. Test this in your development pipelines first. Get comfortable with the format and process.
+
+Any questions about what we've covered or about the demo you just saw?"
+
+Presenter Notes:
+
+Timing: Aim for 2-3 minutes per slide
+
+Engagement: Ask rhetorical questions like "How many of you have faced this problem?"
+
+Transitions: Use phrases like "Now, let's look at...", "Moving to the next point...", "What does this mean for you?"
+
+Demo: Practice the demo flow beforehand, have a backup screenshot ready
+
+Q&A: End with "I'm happy to take any questions" and pause for 5 seconds
+
+give it simple english
+Slide 1: What This Feature Does
+"Hello everyone. Today I'll show you a new feature that makes pipelines run faster.
+
+We all know this problem: Your pipeline needs a specific tool, but it's not installed on the Jenkins agent. So the pipeline fails, and you have to wait for someone to install it.
+
+This feature fixes that. When your pipeline needs a tool, it automatically downloads and installs it. But only if the tool is approved by our security team (EARC).
+
+This means: No more waiting for tool installations, but still safe and approved tools."
+
+Slide 2: How You Use It
+"You'll see three situations when using this:
+
+First time use - The tool isn't on the agent, so the system downloads and installs it.
+
+Tool already there - If you used it before, it's already installed. The system skips the download.
+
+Wrong or not approved - If you ask for a tool that's not approved, the pipeline will fail.
+
+Simple rule: Always use this format: OS_TOOLNAME_VERSION
+Like: WINDOWS_PYTHON_3.11.1"
+
+Slide 3: Let Me Show You
+(Switch to demo screen)
+
+"Watch this. I have a pipeline that needs Python 3.11.1.
+
+First, it checks if Python is already installed... It's not.
+
+Then it checks if this version is approved... Yes, it is.
+
+Now it downloads and installs... Takes about 45 seconds.
+
+And now the pipeline runs successfully!
+
+See the format here: WINDOWS_PYTHON_3.11.1
+That's important - use exactly this format."
+
+Slide 4: Why This Is Good
+"This feature helps us in three ways:
+
+Saves time - No waiting for tool installations. You get what you need right away.
+
+Keeps us safe - Only approved tools can be installed. Our security team controls the list.
+
+More flexible - Different teams can use different tool versions on the same Jenkins agent.
+
+Result: Less waiting, more working."
+
+Slide 5: What You Need to Do
+"Here's what you should remember:
+
+Check first - Before using a tool, check if it's approved on our EARC website.
+
+Use right format - Always use: OS_TOOLNAME_VERSION.VERSION.VERSION
+
+Test first - Try it in your development pipelines before using in production.
+
+Ask for help - If you need a new tool approved, contact the EARC team. If you have technical problems, contact the SDI team.
+
+Questions? I'm happy to answer them."
+
